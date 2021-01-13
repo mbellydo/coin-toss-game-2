@@ -1,10 +1,4 @@
 $(function(){
-    /*let heads = 1;
-    let tails = 0;
-
-    let headsBtn = $('#heads').val(1)
-    let tailsBtn = $('#tails').val(0)*/
-
     let userScore = 0;
     let pcScore = 0;
 
@@ -15,6 +9,9 @@ $(function(){
     let computerScore = $('#computer-score')
 
     let coin = $('#image')
+    let winner = $('#winner')
+    winner.css("color","blue")
+    winner.css("font-weight","bold")
 
     $(".button").click(function(e){
         let userSelection = e.target.id
@@ -30,47 +27,60 @@ $(function(){
         let coinResult = getHeadOrTails()
         
         //actualizar imagen moneda en funcion de resultado
-        let coinImage = "./"+coinResult+".png"
+        /*let coinImage = "./"+coinResult+".png"
         if($("#coinImg").length){
             $("#coinImg").remove()
         }else{
             coin.append('<img src="'+coinImage+'" alt="heads" id="coinImg">')
-        }
+        }*/
+        
+        //Flip coin
+        var flipResult = coinResult
+        $('#image').removeClass();
+        setTimeout(function(){
+            if(flipResult === "heads"){
+                $('#image').addClass('heads');
+            }else {
+                $('#image').addClass('tails');
+            }
+        }, 100);
         
         //mirar si jugador ha acertado y actualizar puntuacion
         if (userSelection === coinResult) {
             playerSelect.css("color","green")
-            userScore+1
-            playerScore.text(userScore)
+            userScore++
+            playerScore.html(userScore)
         }else{
             playerSelect.css("color","red")
-            userScore-1
-            playerScore.text(userScore)
+            userScore--
+            playerScore.html(userScore)
         }
         
         //mirar si pc ha acertado y actualizar puntuacion
         if (computerSelection === coinResult) {
             computerSelect.css("color","green")
-            pcScore+1
-            computerScore.text(pcScore)
+            pcScore++
+            computerScore.html(pcScore)
         }else{
             computerSelect.css("color","red")
-            pcScore-1
-            computerScore.text(pcScore)
+            pcScore--
+            computerScore.html(pcScore)
         }
         
         //al llegar a 5 mostrar ganador
         if (userScore === 5) {
-            $('#winner').html("Player Wins!")
+            winner.html("Player Wins!")
+            $(".button").attr("disabled", true);
         } else if (pcScore === 5) {
-            $('#winner').html("Computer Wins!")
+            winner.html("Computer Wins!")
+            $(".button").attr("disabled", true);
         }
     });
 
     function getHeadOrTails() {
         //calcular num aleatorio 0-1
         const result = Math.floor(Math.random() * 2)
-        //console.log(result)
+        
         //si 0 = tails y si es 1 = heads (str)
         if(result === 0){
             return "tails"
@@ -78,4 +88,10 @@ $(function(){
             return "heads"
         }
     }
+
+    //----------------------------------------------------------
+
+    /*$('#image').on('click', function(){
+        
+    });*/
 });
