@@ -1,110 +1,81 @@
-//grab selection of head or tail
-const buttons = document.querySelectorAll('button');
-//set values for heads and tails
-let heads = 1;
-let tails = 0;
-let userScore = 0;
-let computerScore = 0;
+$(function(){
+    /*let heads = 1;
+    let tails = 0;
 
+    let headsBtn = $('#heads').val(1)
+    let tailsBtn = $('#tails').val(0)*/
 
-function displaySelections(user, computer){
-    const playerSelection = document.querySelector('#player-selection');
-    const computerSelection = document.querySelector('#computer-selection');
-    if (user === 'heads'){
-        playerSelection.style.color = 'green';
-    }
-    if (user === 'tails'){
-        playerSelection.style.color = 'blue';
-    }
-    if (computer === 'heads'){
-        computerSelection.style.color = 'green';
-    }
-    if (computer === 'tails'){
-        computerSelection.style.color = 'blue';
-    }
-    playerSelection.innerHTML = `${user}`;
-    computerSelection.innerHTML = `${computer}`
-}
+    let userScore = 0;
+    let pcScore = 0;
 
-function displayRandom(random){
-    const displayResult = document.querySelector('#image');
-    console.log(random);
-    
-        if (random === 1){
-            displayResult.style.backgroundImage =  "url('./heads.png')";
-            
-        } else {
-            displayResult.style.backgroundImage =  "url('./tails.png')";
-        }    
-}
+    let playerSelect = $('#player-selection')
+    let computerSelect = $('#computer-selection')
 
-function tallyScore(random, userPick, computerPick){
-    //select scoreboard from DOM
-    const playerDisplay = document.querySelector('#player-score');
-    const computerDisplay = document.querySelector('#computer-score');
-    const winner = document.querySelector('#winner');
+    let playerScore = $('#player-score')
+    let computerScore = $('#computer-score')
 
-    if (userPick === random){
-        userScore++;
-    }
-    if (computerPick === random){
-        computerScore++;
-    }
-    playerDisplay.textContent = `${userScore}`;
-    computerDisplay.textContent = `${computerScore}`;
-    
-    if (userScore === 5 && computerScore === 5){
-        winner.innerHTML = `<h1>It's a Tie</h1>`;
-    } else if (userScore === 5){
-        winner.innerHTML = `<h1>You Win!!!</h1>`;
-    } else if (computerScore === 5){
-        winner.innerHTML = `<h1>Computer Wins!!!</h1>`;
-    }
-}
+    let coin = $('#image')
 
-//add an event listener to the buttons
-buttons.forEach(function(button){
-    button.addEventListener('click', function(e){
-        //Computer randomly select heads or tails
-        const random = Math.round(Math.random());
-        //Computer selects a random 'heads' or 'tails
-        const computerPick = Math.round(Math.random());
-        //Record computers selection
-        let computerSelection;
-        if (computerPick === 1){
-            computerSelection = 'heads';
-        } else {
-            computerSelection = 'tails';
+    $(".button").click(function(e){
+        let userSelection = e.target.id
+
+        playerSelect.html(userSelection)
+        
+        //llamar func getHeadOrTails y actualizar texto computer
+        let computerSelection = getHeadOrTails()
+        
+        computerSelect.html(computerSelection)
+        
+        //llamar func getHeadOrTails para saber tirada
+        let coinResult = getHeadOrTails()
+        
+        //actualizar imagen moneda en funcion de resultado
+        let coinImage = "./"+coinResult+".png"
+        if($("#coinImg").length){
+            $("#coinImg").remove()
+        }else{
+            coin.append('<img src="'+coinImage+'" alt="heads" id="coinImg">')
         }
         
-        //spin the coin
-        const spin = document.querySelector('#image');
-        spin.classList.add('animate');
-
-        //Record users selection
-        const userSelection = e.target.id;
-        let userPick;
-
-        if (userSelection === 'heads'){
-            userPick = 1;
-        } else if (userSelection === 'tails'){
-            userPick = 0;
+        //mirar si jugador ha acertado y actualizar puntuacion
+        if (userSelection === coinResult) {
+            playerSelect.css("color","green")
+            userScore+1
+            playerScore.text(userScore)
+        }else{
+            playerSelect.css("color","red")
+            userScore-1
+            playerScore.text(userScore)
         }
-
-        //displays the player and computer's selection 
-        //in the Selected portion of DOM
-        displaySelections(userSelection, computerSelection);
-        displayRandom(random);
-
-       
         
-        //Adds the score of the player and computer
-        setTimeout(function(){
-            tallyScore(random, userPick, computerPick);
-            //resets animations
-            document.querySelector('#image').classList.remove('animate');
-        }, 2000);
+        //mirar si pc ha acertado y actualizar puntuacion
+        if (computerSelection === coinResult) {
+            computerSelect.css("color","green")
+            pcScore+1
+            computerScore.text(pcScore)
+        }else{
+            computerSelect.css("color","red")
+            pcScore-1
+            computerScore.text(pcScore)
+        }
+        
+        //al llegar a 5 mostrar ganador
+        if (userScore === 5) {
+            $('#winner').html("Player Wins!")
+        } else if (pcScore === 5) {
+            $('#winner').html("Computer Wins!")
+        }
+    });
 
-    })
-})
-
+    function getHeadOrTails() {
+        //calcular num aleatorio 0-1
+        const result = Math.floor(Math.random() * 2)
+        //console.log(result)
+        //si 0 = tails y si es 1 = heads (str)
+        if(result === 0){
+            return "tails"
+        }else if (result === 1){
+            return "heads"
+        }
+    }
+});
